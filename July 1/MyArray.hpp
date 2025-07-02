@@ -22,6 +22,9 @@ public:
     int getCapacity(); // Узнать емкость
     int getElem(int pos); // Доступ к элементу - аналог индексации
     
+    int& operator[](int pos); // Индексация с помощью []
+
+    void sort(); // сортировка
     
 private:
     int *arr; // Внутренний динамический массив
@@ -29,4 +32,5 @@ private:
     int capacity; // Емкость массива - сколько доступно памяти?
     
     void resize(int offset); // А если кончилась емкость?
+    void insertionSort(); // конкретная реализация сортировки
 };

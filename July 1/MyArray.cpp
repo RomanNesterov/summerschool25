@@ -91,3 +91,20 @@ int MyArray::getCapacity() {
 int MyArray::getElem(int pos) {
     return arr[pos];
 }
+
+int& MyArray::operator[](int pos) {
+    if ((pos >= 0) && (pos < size)) {
+        return arr[pos];
+    }
+
+    throw -1;
+}
+
+void MyArray::sort() {
+    return insertionSort();
+}
+
+void MyArray::insertionSort() {
+    throw "not implemented yet!";
+}
+
