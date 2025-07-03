@@ -9,7 +9,7 @@
 class NodeInt {
 public:
     int value;
-    //int height;
+    int height;
     NodeInt *l, *r;
     NodeInt();
     NodeInt(int value);
@@ -41,4 +41,6 @@ public:
     int floor(int value);
     // Возвращает int_max, если не смогли найти такой больший элемент!
     int ceiling(int value);
+    // true, если получилось удалить!
+    bool remove(int value);
 };

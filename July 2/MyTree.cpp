@@ -194,3 +194,59 @@ int TreeInt::ceiling(int value) {
     return local_min;
 }
 
+// true, если получилось удалить!
+bool TreeInt::remove(int value) {
+    NodeInt* current_node = root, *parent = nullptr, *buffer;
+    std::stack<NodeInt*> to_update;
+    bool is_found = false, is_deleted = false;
+
+    if (root == nullptr) {
+        return false;
+    }
+
+    while (!is_found && current_node != nullptr) {
+        if (current_node->value > value) {
+            to_update.push(current_node);
+            current_node = current_node->l;
+        }
+        else if (current_node->value < value) {
+            to_update.push(current_node);
+            current_node = current_node->r;
+        } else {
+            is_found = true;
+            while (!is_deleted) {
+                if (current_node->l != nullptr) {
+                    current_node->value = current_node->l->value;
+                    parent = current_node;
+                    to_update.push(current_node);
+                    current_node = current_node->l;
+                } else if (current_node->r != nullptr) {
+                    current_node->value = current_node->r->value;
+                    parent = current_node;
+                    to_update.push(current_node);
+                    current_node = current_node->r;
+                } else {
+                    if (parent->r == current_node) {
+                        parent->r = nullptr;
+                    }
+                    else if (parent->l == current_node) {
+                        parent->l = nullptr;
+                    }
+                    delete current_node;
+                    is_deleted = true;
+                }
+            }
+            size -= 1;
+            while (!to_update.empty())
+            {
+                buffer = to_update.top();
+                to_update.pop();
+                buffer->height = (buffer->l != nullptr) ? buffer->l->height + 1 : 1;
+                buffer->height = (buffer->r != nullptr) ? std::max(buffer->height, buffer->r->height + 1) : buffer->height;
+                // метод ребаланса - ссююю дааа!
+            }
+            return true;
+        }
+    }
+    return false;
+}
