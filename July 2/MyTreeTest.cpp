@@ -239,9 +239,62 @@ void TestSetErasing() {
     std::cout << res1 / 4 << ' ' << res2 / 4;
 }
 
+// тест времени рекурсивной вставки и высоты нашего самописного дерева
+// в результате вставки случайно перемешанной последовательности значений
+void TestTreeInsert() {
+    size_t totalNodes = pow(2, 14) - 1; // количество узлов 2^(h+1) - 1
+    
+    // два файла для хранения результатов - время работы и высота
+    std::ofstream outFile1("/Users/romann./Downloads/insertTime.csv");
+    std::ofstream outFile2("/Users/romann./Downloads/insertHeight.csv");
+    
+    // создание и перемешивание массива тестовых значений
+    std::vector<int> testArr(totalNodes);
+    for (int i = 0; i < totalNodes; ++i) {
+        testArr[i] = i;
+    }
+    
+    std::default_random_engine rng(std::random_device{}());
+    std::shuffle(testArr.begin(), testArr.end(), rng);
+    
+    // внешний цикл по количеству экспериментов,
+    // чтобы далее рассмотреть среднее время вставки
+    for (int i = 0; i < 15; ++i) {
+        TreeInt myTree;
+        outFile1 << "Эксперимент " << i + 1 << ", ";
+        for (int j = 0; j < totalNodes; ++j) {
+            auto start = clocks::now();
+            myTree.insertRec(testArr[j]);
+            auto elapsed = clocks::now() - start;
+            
+            // ввиду большого числа значений можем записывать
+            // только каждое десятое измерение
+            if (j % 10 == 0) {
+                outFile1 << std::chrono::duration_cast<nanoseconds>(elapsed).count();
+                outFile1 << ", ";
+            }
+        }
+        
+        // переводим строку в файле после окончания
+        // записи очередного эксперимента
+        outFile1 << std::endl;
+    }
+    
+    // динамику высоты достаточно посчитать один раз,
+    // поскольку наше самописное дерево не является случайным
+    TreeInt myTree1;
+    for (int j = 0; j < totalNodes; ++j) {
+        myTree1.insertRec(testArr[j]);
+        
+        if (j % 10 == 0) {
+            outFile2 << myTree1.height() << ", ";
+        }
+    }
+}
 
 // следите - файл main() должен быть один!
 int main() {
-    CompareTest();
-    TestLinear();
+    //CompareTest();
+    //TestLinear();
+    TestTreeInsert();
 }

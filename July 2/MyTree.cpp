@@ -1,24 +1,27 @@
 //
 //  MyTree.cpp
 //  summerschool
-//  Реализация простого дерева - шаг 1
+//  Реализация простого дерева - шаг 1, 2, 3
 //  Created by Roman N. on 02.07.2025.
 //
 
 #include "MyTree.hpp"
 #include <limits>
 #include <iostream>
+#include <algorithm> // для использования стандартных функций
 
 NodeInt::NodeInt() {
     int value = 0;
     //int height;
     l = r = nullptr;
+    height = 1;
 }
 
 NodeInt::NodeInt(int value) {
     this->value = value;
     //int height;
     l = r = nullptr;
+    height = 1;
 }
 
 NodeInt::NodeInt(int value, NodeInt* l, NodeInt* r) {
@@ -26,6 +29,7 @@ NodeInt::NodeInt(int value, NodeInt* l, NodeInt* r) {
     //int height;
     this->l = l;
     this->r = r;
+    height = 1 + std::max(l->height, r->height);
 }
 
 NodeInt::~NodeInt() {
@@ -249,4 +253,39 @@ bool TreeInt::remove(int value) {
         }
     }
     return false;
+}
+
+void TreeInt::insertRec(int val) {
+    root = insertRecursive(root, val);
+    size++;
+}
+
+NodeInt* TreeInt::insertRecursive(NodeInt* node, int val) {
+    if (!node) return new NodeInt(val);
+    
+    if (val < node->value) {
+        node->l = insertRecursive(node->l, val);
+    } else if (val > node->value) {
+        node->r = insertRecursive(node->r, val);
+    } else {
+        return node;
+    }
+    
+    // благодаря рекурсии, обновятся высоты всех узлов
+    updateHeight(node);
+    return node;
+}
+
+int TreeInt::height() {
+    return getHeight(root);
+}
+
+int TreeInt::getHeight(NodeInt* node) {
+    return node ? node->height : 0;
+}
+
+void TreeInt::updateHeight(NodeInt* node) {
+    if (node) {
+        node->height = 1 + std::max(getHeight(node->l), getHeight(node->r));
+    }
 }
